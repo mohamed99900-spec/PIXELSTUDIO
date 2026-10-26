@@ -1,0 +1,775 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b13">
+<title>PIXELSTUDIO — استوديو الإبداع</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
+
+:root{
+  --bg:#080b13;--panel:#101522;--panel2:#151c2b;--line:#252e41;
+  --text:#f4f7ff;--muted:#929db4;--cyan:#65f4dc;--purple:#a78bfa;
+  --pink:#ff72bc;--radius:20px
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Cairo',Tahoma,sans-serif;min-height:100vh}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+button:disabled{opacity:.45;cursor:not-allowed}
+a{color:inherit}
+.app{max-width:1500px;margin:auto;padding:24px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:30px}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,var(--cyan),var(--purple));display:grid;place-items:center;color:#071015;font-size:25px;font-weight:900;box-shadow:0 0 35px #65f4dc25}
+.brand h1{font-size:22px;margin:0;font-weight:900;letter-spacing:1px}
+.brand p{font-size:11px;color:var(--muted);margin:2px 0 0}
+.status{font-size:12px;color:var(--cyan);border:1px solid #65f4dc36;padding:8px 13px;border-radius:30px}
+.hero{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:28px;padding:36px;margin-bottom:24px;background:radial-gradient(ellipse at 90% 0%,#6c55e51b,transparent 45%),radial-gradient(ellipse at 5% 100%,#65f4dc12,transparent 45%),#0d111c}
+.hero:after{content:"✳";position:absolute;left:8%;top:12px;font-size:125px;color:#a78bfa0b;pointer-events:none}
+.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:2px}
+.hero h2{font-size:clamp(27px,4vw,46px);line-height:1.35;margin:12px 0}
+.gradient{background:linear-gradient(90deg,var(--cyan),#a78bfa,var(--pink));background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:670px;line-height:2;margin:0}
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:24px 0}
+.tool-card{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:19px;cursor:pointer;transition:.2s}
+.tool-card:hover,.tool-card.active{border-color:#65f4dc85;transform:translateY(-3px);background:#131c29}
+.tool-icon{font-size:27px;width:49px;height:49px;display:grid;place-items:center;border-radius:15px;background:#65f4dc12;margin-bottom:13px}
+.tool-card h3{margin:0 0 5px;font-size:16px}
+.tool-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.9}
+.workspace{display:none}
+.workspace.active{display:block}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:20px;min-width:0}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.panel-head h3{font-size:18px;margin:0}
+.panel-head p{color:var(--muted);font-size:12px;margin:5px 0 0}
+.badge{font-size:11px;padding:6px 10px;background:#65f4dc12;color:var(--cyan);border-radius:9px}
+.editor-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,1fr);gap:18px}
+.preview{min-height:330px;border:1px dashed #303b50;border-radius:17px;background-color:#0b0f19;background-image:linear-gradient(45deg,#ffffff05 25%,transparent 25%),linear-gradient(-45deg,#ffffff05 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ffffff05 75%),linear-gradient(-45deg,transparent 75%,#ffffff05 75%);background-size:22px 22px;background-position:0 0,0 11px,11px -11px,-11px 0;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.preview img{max-width:100%;max-height:600px;object-fit:contain;display:block}
+.empty{text-align:center;padding:30px;color:var(--muted)}
+.empty .big{font-size:45px;margin-bottom:12px}
+.empty h4{color:var(--text);margin:0 0 6px}
+.empty p{font-size:12px;line-height:2}
+.controls{display:flex;flex-direction:column;gap:14px}
+.control{background:#0d121e;border:1px solid #202a3c;border-radius:13px;padding:13px}
+.control label{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#c6cede;margin-bottom:10px}
+.control output{color:var(--cyan)}
+input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer}
+input[type=text],input[type=number],select{width:100%;background:#0b101b;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;min-width:0}
+input[type=color]{width:44px;height:35px;background:transparent;border:0;cursor:pointer}
+.btn{border:1px solid var(--line);background:#182033;color:var(--text);padding:10px 15px;border-radius:11px;font-size:12px;font-weight:700;transition:.2s}
+.btn:hover{border-color:var(--cyan);transform:translateY(-1px)}
+.btn.primary{background:var(--cyan);color:#071411;border-color:var(--cyan)}
+.btn.purple{background:#a78bfa;color:#110c20;border-color:#a78bfa}
+.btn.danger{color:#ff9eb4}
+.btn-row{display:flex;gap:9px;flex-wrap:wrap}
+.btn-row .btn{flex:1}
+.upload{display:block;text-align:center;padding:13px;border:1px dashed #526079;border-radius:12px;color:var(--cyan);cursor:pointer;font-size:12px}
+.upload:hover{background:#65f4dc0a}
+.upload input{display:none}
+.section-label{font-size:12px;color:var(--muted);margin-bottom:9px;display:block}
+.divider{height:1px;background:var(--line);margin:4px 0}
+.audio-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.audio-player{background:#0c111c;border:1px solid var(--line);padding:22px;border-radius:17px}
+.audio-art{height:150px;border-radius:14px;background:radial-gradient(circle at 50% 40%,#a78bfa35,transparent 45%),linear-gradient(135deg,#17152b,#10252a);display:grid;place-items:center;font-size:55px;margin-bottom:17px}
+.track-name{font-weight:800;overflow-wrap:anywhere}
+.track-meta{font-size:12px;color:var(--muted);margin-top:5px}
+audio{width:100%;margin-top:17px}
+.wave{display:flex;align-items:center;justify-content:center;gap:4px;height:58px;margin:12px 0;overflow:hidden}
+.wave span{display:block;width:4px;border-radius:6px;background:linear-gradient(to top,var(--purple),var(--cyan));height:var(--h);opacity:.8}
+.trim-box{border:1px solid var(--line);border-radius:14px;padding:17px;margin-top:15px}
+.trim-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.trim-fields label{font-size:12px;color:var(--muted)}
+.trim-fields input{margin-top:8px}
+.cover-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(240px,1fr);gap:18px}
+.cover-stage{background:#080b13;border:1px solid var(--line);border-radius:16px;display:grid;place-items:center;overflow:hidden;padding:15px;min-height:310px}
+#coverCanvas{display:block;max-width:100%;max-height:650px;width:100%;height:auto;object-fit:contain}
+.preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.preset{background:#0d121e;border:1px solid var(--line);padding:11px 5px;border-radius:10px;font-size:11px;color:var(--text)}
+.preset.active{border-color:var(--cyan);color:var(--cyan)}
+footer{text-align:center;padding:25px;color:var(--muted);font-size:11px;line-height:2}
+.toast{position:fixed;bottom:22px;left:22px;z-index:20;background:#162235;border:1px solid #65f4dc80;padding:13px 19px;border-radius:13px;font-size:13px;box-shadow:0 12px 40px #0008;opacity:0;transform:translateY(15px);pointer-events:none;transition:.25s}
+.toast.show{opacity:1;transform:translateY(0)}
+.small-note{font-size:11px;line-height:1.9;color:var(--muted)}
+@media(max-width:850px){
+ .editor-grid,.audio-layout,.cover-layout{grid-template-columns:1fr}
+ .tools{grid-template-columns:1fr}
+ .hero{padding:25px}
+ .app{padding:14px}
+ .preview{min-height:250px}
+ .topbar{align-items:flex-start}
+}
+@media(min-width:851px){
+ .tool-card{display:flex;align-items:center;gap:15px}
+ .tool-icon{flex-shrink:0;margin:0}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">P</div>
+    <div><h1>PIXELSTUDIO<span class="gradient">.</span></h1><p>YOUR CREATIVE SPACE</p></div>
+  </div>
+  <div class="status">● استوديو محلي</div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">CREATIVE TOOLS / 001</div>
+  <h2>أفكارك تستحق أن تظهر<br><span class="gradient">بأفضل صورة.</span></h2>
+  <p>مساحتك الإبداعية لتحرير الصور والصوت وتصميم الأغلفة، بأدوات عملية وواجهة عربية أنيقة. ابدأ مباشرة دون إنشاء حساب.</p>
+</section>
+
+<div class="tools">
+  <div class="tool-card active" data-tab="image">
+    <div class="tool-icon">✧</div>
+    <div><h3>استوديو الصور</h3><p>حرّر الصور وأضف النصوص والفلاتر ثم صدّر النتيجة.</p></div>
+  </div>
+  <div class="tool-card" data-tab="audio">
+    <div class="tool-icon">♫</div>
+    <div><h3>استوديو الصوت</h3><p>استمع لملفاتك وحدد المقطع الذي تريد قصه وتصديره.</p></div>
+  </div>
+  <div class="tool-card" data-tab="cover">
+    <div class="tool-icon">▧</div>
+    <div><h3>استوديو الأغلفة</h3><p>أنشئ أغلفة يوتيوب ومنشورات وقصص السوشيال ميديا.</p></div>
+  </div>
+</div>
+
+<!-- IMAGE EDITOR -->
+<section class="workspace active" id="image">
+<div class="panel">
+  <div class="panel-head">
+    <div><h3>✧ محرر الصور</h3><p>كل التعديلات تظهر على المعاينة مباشرة.</p></div>
+    <span class="badge">PNG EXPORT</span>
+  </div>
+  <div class="editor-grid">
+    <div>
+      <label class="upload" style="margin-bottom:12px">
+        ＋ اختر صورة من جهازك
+        <input id="imageFile" type="file" accept="image/*">
+      </label>
+      <div class="preview" id="imagePreview">
+        <div class="empty"><div class="big">▧</div><h4>مساحتك الإبداعية</h4><p>ارفع صورة للبدء في تعديلها<br>تتم معالجة الصورة داخل متصفحك.</p></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="control">
+        <label>السطوع <output id="brightnessVal">100%</output></label>
+        <input id="brightness" type="range" min="0" max="200" value="100">
+      </div>
+      <div class="control">
+        <label>التباين <output id="contrastVal">100%</output></label>
+        <input id="contrast" type="range" min="0" max="200" value="100">
+      </div>
+      <div class="control">
+        <label>التشبع <output id="saturateVal">100%</output></label>
+        <input id="saturate" type="range" min="0" max="250" value="100">
+      </div>
+      <div class="control">
+        <label>الضبابية <output id="blurVal">0px</output></label>
+        <input id="blur" type="range" min="0" max="10" value="0">
+      </div>
+      <div class="control">
+        <span class="section-label">نص على الصورة</span>
+        <input id="imageText" type="text" placeholder="اكتب عنوانًا أو عبارة...">
+        <div style="display:flex;align-items:center;gap:12px;margin-top:12px">
+          <div style="flex:1"><span class="section-label">حجم النص</span><input id="imageTextSize" type="range" min="16" max="100" value="42"></div>
+          <div><span class="section-label">لون النص</span><input id="imageTextColor" type="color" value="#ffffff"></div>
+        </div>
+      </div>
+      <div class="control">
+        <span class="section-label">الفلاتر السريعة</span>
+        <div class="btn-row">
+          <button class="btn" data-filter="normal">طبيعي</button>
+          <button class="btn" data-filter="bw">أبيض وأسود</button>
+          <button class="btn" data-filter="vintage">سينمائي</button>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="rotateImage">↻ تدوير 90°</button>
+        <button class="btn" id="flipImage">⇋ قلب أفقي</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="resetImage">إعادة ضبط</button>
+        <button class="btn primary" id="downloadImage">تنزيل PNG ↓</button>
+      </div>
+    </div>
+  </div>
+  <p class="small-note">ملحوظة: النص يظهر في منتصف الصورة. تُحفظ تعديلات الفلاتر والتدوير والنص داخل الصورة المصدّرة.</p>
+</div>
+</section>
+
+<!-- AUDIO STUDIO -->
+<section class="workspace" id="audio">
+<div class="panel">
+  <div class="panel-head">
+    <div><h3>♫ استوديو الصوت</h3><p>استمع إلى الملفات الصوتية وحدد الجزء الذي تريد الاحتفاظ به.</p></div>
+    <span class="badge">WAV EXPORT</span>
+  </div>
+  <label class="upload" style="margin-bottom:18px">
+    ＋ اختر ملفًا صوتيًا من جهازك
+    <input id="audioFile" type="file" accept="audio/*">
+  </label>
+  <div class="audio-layout">
+    <div class="audio-player">
+      <div class="audio-art">♫</div>
+      <div class="track-name" id="audioName">لم يتم اختيار ملف صوتي</div>
+      <div class="track-meta" id="audioMeta">ارفع ملفًا للبدء</div>
+      <div class="wave" id="wave"></div>
+      <audio id="audioPlayer" controls preload="metadata" style="display:none"></audio>
+      <div class="control" style="margin-top:15px">
+        <label>مستوى الصوت <output id="volumeVal">100%</output></label>
+        <input id="volume" type="range" min="0" max="100" value="100">
+      </div>
+    </div>
+    <div>
+      <div class="control">
+        <span class="section-label">معلومات الملف</span>
+        <p style="font-size:13px;line-height:2;margin:0">يمكنك تشغيل الصوت الأصلي، ثم تحديد بداية ونهاية المقطع. سيُصدَّر الجزء المحدد كملف WAV.</p>
+        <div class="divider" style="margin:14px 0"></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin:8px 0"><span style="color:var(--muted)">المدة</span><strong id="durationInfo">—</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin:8px 0"><span style="color:var(--muted)">الصيغة الناتجة</span><strong>WAV / PCM 16-bit</strong></div>
+      </div>
+      <div class="trim-box">
+        <h4 style="margin:0 0 15px">✂ قص المقطع</h4>
+        <div class="trim-fields">
+          <label>البداية (ثانية)
+            <input id="trimStart" type="number" min="0" step="0.1" value="0">
+          </label>
+          <label>النهاية (ثانية)
+            <input id="trimEnd" type="number" min="0" step="0.1" value="0">
+          </label>
+        </div>
+        <div class="btn-row" style="margin-top:15px">
+          <button class="btn" id="setStart">البداية الحالية</button>
+          <button class="btn" id="setEnd">النهاية الحالية</button>
+        </div>
+        <button class="btn primary" id="exportAudio" style="width:100%;margin-top:12px">قص وتصدير WAV ↓</button>
+      </div>
+    </div>
+  </div>
+  <p class="small-note">قد يحتاج فك ترميز الملفات الكبيرة إلى وقت وذاكرة. لا يُرفع الملف إلى خادم. التصدير هنا WAV وليس MP3.</p>
+</div>
+</section>
+
+<!-- COVER DESIGNER -->
+<section class="workspace" id="cover">
+<div class="panel">
+  <div class="panel-head">
+    <div><h3>▧ استوديو الأغلفة</h3><p>أنشئ تصميمًا سريعًا قابلًا للتعديل والتنزيل.</p></div>
+    <span class="badge">DESIGN LAB</span>
+  </div>
+  <div class="cover-layout">
+    <div>
+      <div class="cover-stage"><canvas id="coverCanvas" width="1280" height="720"></canvas></div>
+      <div class="btn-row" style="margin-top:13px">
+        <button class="btn" id="coverReset">إعادة التصميم</button>
+        <button class="btn primary" id="downloadCover">تنزيل التصميم PNG ↓</button>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="control">
+        <span class="section-label">مقاس التصميم</span>
+        <div class="preset-grid">
+          <button class="preset active" data-size="youtube">يوتيوب<br>16:9</button>
+          <button class="preset" data-size="square">منشور<br>1:1</button>
+          <button class="preset" data-size="story">قصة<br>9:16</button>
+        </div>
+      </div>
+      <div class="control">
+        <span class="section-label">العنوان الرئيسي</span>
+        <input id="coverTitle" type="text" value="اصنع شيئًا استثنائيًا">
+        <span class="section-label" style="margin-top:12px">العنوان الفرعي</span>
+        <input id="coverSubtitle" type="text" value="رحلتك تبدأ من هنا">
+      </div>
+      <div class="control">
+        <label>حجم العنوان <output id="coverSizeVal">76px</output></label>
+        <input id="coverSize" type="range" min="30" max="130" value="76">
+      </div>
+      <div class="control">
+        <span class="section-label">ألوان التصميم</span>
+        <div style="display:flex;gap:18px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px">الخلفية <input id="coverColor1" type="color" value="#10172c"></label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px">التوهج <input id="coverColor2" type="color" value="#6555ee"></label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px">النص <input id="coverTextColor" type="color" value="#ffffff"></label>
+        </div>
+      </div>
+      <div class="control">
+        <span class="section-label">صورة خلفية اختيارية</span>
+        <label class="upload">＋ رفع صورة للتصميم
+          <input id="coverImage" type="file" accept="image/*">
+        </label>
+        <button class="btn danger" id="removeCoverImage" style="width:100%;margin-top:10px">إزالة صورة الخلفية</button>
+      </div>
+      <div class="control">
+        <span class="section-label">إعدادات إضافية</span>
+        <label style="display:flex;align-items:center;gap:9px;justify-content:flex-start"><input type="checkbox" id="coverGlow" checked> تأثير توهج</label>
+        <label style="display:flex;align-items:center;gap:9px;justify-content:flex-start;margin-top:10px"><input type="checkbox" id="coverFrame" checked> إطار زخرفي</label>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer>
+  PIXELSTUDIO © 2026 — مساحة إبداعك، بين يديك.<br>
+  تتم معالجة الصور والصوت محليًا في متصفحك. لا تُرفع ملفاتك إلى خادم من خلال هذا التطبيق.
+</footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/* ---------- General ---------- */
+const $ = id => document.getElementById(id);
+let toastTimer;
+function toast(message){
+  const el=$("toast");
+  el.textContent=message;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove("show"),2600);
+}
+function formatTime(seconds){
+  if(!Number.isFinite(seconds)||seconds<0)return "—";
+  const s=Math.floor(seconds);
+  return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+}
+document.querySelectorAll(".tool-card").forEach(card=>{
+  card.addEventListener("click",()=>{
+    document.querySelectorAll(".tool-card").forEach(c=>c.classList.toggle("active",c===card));
+    document.querySelectorAll(".workspace").forEach(w=>w.classList.toggle("active",w.id===card.dataset.tab));
+  });
+});
+
+/* ---------- Image editor ---------- */
+const imageCanvas=document.createElement("canvas");
+const ictx=imageCanvas.getContext("2d");
+let sourceImage=null;
+let sourceImageURL=null;
+let imageRotation=0;
+let imageFlipped=false;
+let imageFilter="normal";
+const filterDefaults={brightness:100,contrast:100,saturate:100,blur:0};
+
+function currentImageSettings(){
+  return {
+    brightness:+$("brightness").value,
+    contrast:+$("contrast").value,
+    saturate:+$("saturate").value,
+    blur:+$("blur").value,
+    text:$("imageText").value,
+    textSize:+$("imageTextSize").value,
+    textColor:$("imageTextColor").value,
+    rotation:imageRotation,
+    flipped:imageFlipped,
+    filter:imageFilter
+  };
+}
+function imageCSS(s){
+  let extra="";
+  if(s.filter==="bw")extra=" grayscale(1)";
+  if(s.filter==="vintage")extra=" sepia(.55) saturate(1.2)";
+  return `brightness(${s.brightness}%) contrast(${s.contrast}%) saturate(${s.saturate}%) blur(${s.blur}px)${extra}`;
+}
+function renderImage(exportMode=false){
+  if(!sourceImage)return;
+  const s=currentImageSettings();
+  const w=sourceImage.naturalWidth||sourceImage.width;
+  const h=sourceImage.naturalHeight||sourceImage.height;
+  const sideways=Math.abs(s.rotation)%180===90;
+  imageCanvas.width=sideways?h:w;
+  imageCanvas.height=sideways?w:h;
+  ictx.clearRect(0,0,imageCanvas.width,imageCanvas.height);
+  ictx.save();
+  ictx.translate(imageCanvas.width/2,imageCanvas.height/2);
+  ictx.rotate(s.rotation*Math.PI/180);
+  ictx.scale(s.flipped?-1:1,1);
+  ictx.filter=imageCSS(s);
+  ictx.drawImage(sourceImage,-w/2,-h/2,w,h);
+  ictx.restore();
+  ictx.filter="none";
+  if(s.text.trim()){
+    const size=Math.max(12,s.textSize);
+    ictx.save();
+    ictx.font=`800 ${size}px Cairo, Tahoma, sans-serif`;
+    ictx.textAlign="center";
+    ictx.textBaseline="middle";
+    ictx.lineJoin="round";
+    ictx.lineWidth=Math.max(2,size/14);
+    ictx.strokeStyle="rgba(0,0,0,.7)";
+    ictx.fillStyle=s.textColor;
+    const lines=s.text.split("\n").slice(0,5);
+    const lineHeight=size*1.35;
+    const startY=imageCanvas.height/2-((lines.length-1)*lineHeight)/2;
+    lines.forEach((line,i)=>{
+      ictx.strokeText(line,imageCanvas.width/2,startY+i*lineHeight);
+      ictx.fillText(line,imageCanvas.width/2,startY+i*lineHeight);
+    });
+    ictx.restore();
+  }
+  let img=$("imageResult");
+  if(!img){
+    img=document.createElement("img");
+    img.id="imageResult";
+    img.alt="معاينة الصورة المعدلة";
+    $("imagePreview").replaceChildren(img);
+  }
+  img.src=imageCanvas.toDataURL("image/png");
+  if(exportMode)toast("تم تجهيز الصورة للتصدير.");
+}
+$("imageFile").addEventListener("change",e=>{
+  const file=e.target.files&&e.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith("image/")){toast("اختر ملف صورة صالحًا.");return;}
+  if(sourceImageURL)URL.revokeObjectURL(sourceImageURL);
+  sourceImageURL=URL.createObjectURL(file);
+  const img=new Image();
+  img.onload=()=>{
+    sourceImage=img;
+    imageRotation=0;imageFlipped=false;imageFilter="normal";
+    resetImageControls();
+    renderImage();
+    toast("تم تحميل الصورة بنجاح.");
+  };
+  img.onerror=()=>toast("تعذر فتح الصورة. جرّب صيغة أخرى.");
+  img.src=sourceImageURL;
+});
+function resetImageControls(){
+  Object.entries(filterDefaults).forEach(([id,v])=>$(id).value=v);
+  $("imageText").value="";
+  $("imageTextSize").value=42;
+  $("imageTextColor").value="#ffffff";
+  updateImageLabels();
+}
+function updateImageLabels(){
+  ["brightness","contrast","saturate","blur"].forEach(id=>{
+    $(id+"Val").textContent=$ (id).value+(id==="blur"?"px":"%");
+  });
+}
+["brightness","contrast","saturate","blur","imageText","imageTextSize","imageTextColor"].forEach(id=>{
+  $(id).addEventListener("input",()=>{
+    updateImageLabels();
+    if(sourceImage)renderImage();
+  });
+});
+document.querySelectorAll("[data-filter]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    imageFilter=btn.dataset.filter;
+    if(sourceImage)renderImage();
+  });
+});
+$("rotateImage").addEventListener("click",()=>{if(!sourceImage)return toast("ارفع صورة أولًا.");imageRotation=(imageRotation+90)%360;renderImage();});
+$("flipImage").addEventListener("click",()=>{if(!sourceImage)return toast("ارفع صورة أولًا.");imageFlipped=!imageFlipped;renderImage();});
+$("resetImage").addEventListener("click",()=>{
+  if(!sourceImage)return toast("ارفع صورة أولًا.");
+  imageRotation=0;imageFlipped=false;imageFilter="normal";
+  resetImageControls();renderImage();toast("تمت إعادة ضبط الصورة.");
+});
+$("downloadImage").addEventListener("click",()=>{
+  if(!sourceImage)return toast("ارفع صورة أولًا.");
+  renderImage();
+  imageCanvas.toBlob(blob=>{
+    if(!blob)return toast("تعذر تصدير الصورة.");
+    downloadBlob(blob,"pixelstudio-image.png");
+  },"image/png");
+});
+function downloadBlob(blob,name){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=name;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+/* ---------- Audio studio ---------- */
+let audioURL=null;
+let audioFileObject=null;
+let audioDuration=0;
+let decodedAudio=null;
+let audioDecodeToken=0;
+const player=$("audioPlayer");
+const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+let audioContext=null;
+$("audioFile").addEventListener("change",async e=>{
+  const file=e.target.files&&e.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith("audio/"))return toast("اختر ملفًا صوتيًا صالحًا.");
+  audioFileObject=file;
+  if(audioURL)URL.revokeObjectURL(audioURL);
+  audioURL=URL.createObjectURL(file);
+  player.src=audioURL;
+  player.style.display="block";
+  $("audioName").textContent=file.name;
+  $("audioMeta").textContent=(file.size/1024/1024).toFixed(2)+" MB";
+  $("durationInfo").textContent="جارٍ التحميل…";
+  decodedAudio=null;
+  const token=++audioDecodeToken;
+  player.onloadedmetadata=()=>{
+    audioDuration=player.duration;
+    $("durationInfo").textContent=formatTime(audioDuration);
+    $("trimStart").value="0";
+    $("trimEnd").value=Number.isFinite(audioDuration)?audioDuration.toFixed(2):"0";
+    $("audioMeta").textContent=formatTime(audioDuration)+" · "+(file.size/1024/1024).toFixed(2)+" MB";
+  };
+  drawWave();
+  if(!AudioContextClass){
+    toast("المتصفح لا يدعم فك ترميز الصوت المطلوب للقص.");
+    return;
+  }
+  try{
+    if(!audioContext)audioContext=new AudioContextClass();
+    const buffer=await file.arrayBuffer();
+    const decoded=await audioContext.decodeAudioData(buffer);
+    if(token!==audioDecodeToken)return;
+    decodedAudio=decoded;
+    audioDuration=decoded.duration;
+    $("durationInfo").textContent=formatTime(audioDuration);
+    $("trimEnd").value=audioDuration.toFixed(2);
+    toast("الصوت جاهز للقص والتصدير.");
+  }catch(err){
+    console.error(err);
+    toast("تعذر فك ترميز الملف. جرّب WAV أو MP3 أو ملفًا آخر.");
+  }
+});
+$("volume").addEventListener("input",()=>{
+  player.volume=+$("volume").value/100;
+  $("volumeVal").textContent=$("volume").value+"%";
+});
+$("setStart").addEventListener("click",()=>{
+  if(!audioFileObject)return toast("ارفع ملفًا صوتيًا أولًا.");
+  $("trimStart").value=Math.max(0,player.currentTime).toFixed(2);
+});
+$("setEnd").addEventListener("click",()=>{
+  if(!audioFileObject)return toast("ارفع ملفًا صوتيًا أولًا.");
+  $("trimEnd").value=Math.min(audioDuration,player.currentTime).toFixed(2);
+});
+function drawWave(){
+  const wave=$("wave");wave.replaceChildren();
+  for(let i=0;i<42;i++){
+    const bar=document.createElement("span");
+    bar.style.setProperty("--h",(12+Math.abs(Math.sin(i*2.13)*Math.cos(i*.43))*43)+"px");
+    wave.appendChild(bar);
+  }
+}
+drawWave();
+
+function encodeWav(buffer,startSeconds,endSeconds){
+  const rate=buffer.sampleRate;
+  const start=Math.floor(startSeconds*rate);
+  const end=Math.floor(endSeconds*rate);
+  const length=end-start;
+  const channels=buffer.numberOfChannels;
+  if(length<=0)throw new Error("empty");
+  const bytesPerSample=2;
+  const blockAlign=channels*bytesPerSample;
+  const dataSize=length*blockAlign;
+  const out=new ArrayBuffer(44+dataSize);
+  const view=new DataView(out);
+  const writeString=(offset,str)=>{
+    for(let i=0;i<str.length;i++)view.setUint8(offset+i,str.charCodeAt(i));
+  };
+  writeString(0,"RIFF");
+  view.setUint32(4,36+dataSize,true);
+  writeString(8,"WAVE");
+  writeString(12,"fmt ");
+  view.setUint32(16,16,true);
+  view.setUint16(20,1,true);
+  view.setUint16(22,channels,true);
+  view.setUint32(24,rate,true);
+  view.setUint32(28,rate*blockAlign,true);
+  view.setUint16(32,blockAlign,true);
+  view.setUint16(34,16,true);
+  writeString(36,"data");
+  view.setUint32(40,dataSize,true);
+  let offset=44;
+  const channelData=Array.from({length:channels},(_,c)=>buffer.getChannelData(c));
+  for(let i=start;i<end;i++){
+    for(let c=0;c<channels;c++){
+      let sample=Math.max(-1,Math.min(1,channelData[c][i]));
+      view.setInt16(offset,sample<0?sample*32768:sample*32767,true);
+      offset+=2;
+    }
+  }
+  return new Blob([out],{type:"audio/wav"});
+}
+$("exportAudio").addEventListener("click",()=>{
+  if(!audioFileObject)return toast("ارفع ملفًا صوتيًا أولًا.");
+  if(!decodedAudio)return toast("انتظر حتى ينتهي تجهيز الصوت.");
+  const start=Number($("trimStart").value);
+  const end=Number($("trimEnd").value);
+  if(!Number.isFinite(start)||!Number.isFinite(end)||start<0||end>decodedAudio.duration||end<=start){
+    return toast("تحقق من وقت البداية والنهاية.");
+  }
+  if(end-start>1800)return toast("المقطع أطول من 30 دقيقة. اختر مقطعًا أقصر.");
+  try{
+    const wav=encodeWav(decodedAudio,start,end);
+    downloadBlob(wav,"pixelstudio-trimmed.wav");
+    toast("تم تصدير المقطع بصيغة WAV.");
+  }catch(err){
+    console.error(err);toast("حدث خطأ أثناء تصدير الصوت.");
+  }
+});
+
+/* ---------- Cover designer ---------- */
+const canvas=$("coverCanvas");
+const ctx=canvas.getContext("2d");
+let coverImage=null;
+let coverImageURL=null;
+let coverSizeType="youtube";
+const sizes={
+  youtube:{w:1280,h:720},
+  square:{w:1080,h:1080},
+  story:{w:1080,h:1920}
+};
+function drawCover(){
+  const {w,h}=sizes[coverSizeType];
+  canvas.width=w;canvas.height=h;
+  const c1=$("coverColor1").value;
+  const c2=$("coverColor2").value;
+  ctx.fillStyle=c1;ctx.fillRect(0,0,w,h);
+
+  const glow=ctx.createRadialGradient(w*.78,h*.24,0,w*.78,h*.24,w*.85);
+  glow.addColorStop(0,c2+"cc");glow.addColorStop(.45,c2+"35");glow.addColorStop(1,c1+"00");
+  ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
+
+  const glow2=ctx.createRadialGradient(w*.12,h*.86,0,w*.12,h*.86,w*.65);
+  glow2.addColorStop(0,"#65f4dc38");glow2.addColorStop(1,"#65f4dc00");
+  ctx.fillStyle=glow2;ctx.fillRect(0,0,w,h);
+
+  if(coverImage){
+    ctx.save();
+    ctx.globalAlpha=.32;
+    const scale=Math.max(w/coverImage.width,h/coverImage.height);
+    const iw=coverImage.width*scale,ih=coverImage.height*scale;
+    ctx.drawImage(coverImage,(w-iw)/2,(h-ih)/2,iw,ih);
+    ctx.restore();
+    ctx.fillStyle=c1+"55";ctx.fillRect(0,0,w,h);
+  }
+
+  // Decorative circles
+  ctx.save();
+  ctx.globalAlpha=.18;ctx.strokeStyle=$("coverTextColor").value;
+  ctx.lineWidth=Math.max(1,w/700);
+  for(let i=0;i<7;i++){
+    ctx.beginPath();ctx.arc(w*.83,h*.30,Math.min(w,h)*(.12+i*.065),0,Math.PI*2);ctx.stroke();
+  }
+  ctx.restore();
+
+  const margin=w*.075;
+  if($("coverFrame").checked){
+    ctx.strokeStyle="#ffffff55";ctx.lineWidth=Math.max(2,w/640);
+    ctx.strokeRect(margin*.6,margin*.6,w-margin*1.2,h-margin*1.2);
+    ctx.strokeStyle=c2;ctx.lineWidth=Math.max(3,w/450);
+    ctx.beginPath();ctx.moveTo(margin,margin);ctx.lineTo(margin+w*.12,margin);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(w-margin,h-margin);ctx.lineTo(w-margin-w*.12,h-margin);ctx.stroke();
+  }
+
+  const title=$("coverTitle").value||"عنوانك هنا";
+  const subtitle=$("coverSubtitle").value;
+  const titleSize=+$("coverSize").value*(w/1280);
+  ctx.textAlign="right";ctx.textBaseline="middle";
+  ctx.font=`900 ${titleSize}px Cairo, Tahoma, sans-serif`;
+  ctx.fillStyle=$("coverTextColor").value;
+  ctx.shadowColor=$("coverGlow").checked?c2:"transparent";
+  ctx.shadowBlur=$("coverGlow").checked?w*.025:0;
+
+  const maxWidth=w*.82;
+  const words=title.split(/\s+/);
+  const lines=[];
+  let line="";
+  for(const word of words){
+    const candidate=line?line+" "+word:word;
+    if(ctx.measureText(candidate).width>maxWidth&&line){lines.push(line);line=word;}
+    else line=candidate;
+  }
+  if(line)lines.push(line);
+  const safeLines=lines.slice(0,4);
+  const lineHeight=titleSize*1.28;
+  const titleCenterY=h*.48;
+  const totalHeight=safeLines.length*lineHeight;
+  safeLines.forEach((txt,i)=>{
+    ctx.fillText(txt,w-margin,titleCenterY-totalHeight/2+lineHeight*(i+.5),maxWidth);
+  });
+  ctx.shadowBlur=0;
+
+  if(subtitle.trim()){
+    const subSize=Math.max(18,w*.025);
+    ctx.font=`600 ${subSize}px Cairo, Tahoma, sans-serif`;
+    ctx.fillStyle=$("coverTextColor").value;
+    ctx.globalAlpha=.82;
+    ctx.fillText(subtitle,w-margin,titleCenterY+totalHeight/2+subSize*1.5,maxWidth);
+    ctx.globalAlpha=1;
+  }
+
+  const tag="PIXELSTUDIO  /  CREATIVE LAB";
+  ctx.textAlign="left";ctx.font=`700 ${Math.max(12,w*.012)}px Arial, sans-serif`;
+  ctx.fillStyle=$("coverTextColor").value;ctx.globalAlpha=.75;
+  ctx.fillText(tag,margin,h-margin*.65);
+  ctx.globalAlpha=1;
+}
+["coverTitle","coverSubtitle","coverSize","coverColor1","coverColor2","coverTextColor","coverGlow","coverFrame"].forEach(id=>{
+  $(id).addEventListener("input",()=>{
+    $("coverSizeVal").textContent=$("coverSize").value+"px";
+    drawCover();
+  });
+});
+document.querySelectorAll("[data-size]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    coverSizeType=btn.dataset.size;
+    document.querySelectorAll("[data-size]").forEach(b=>b.classList.toggle("active",b===btn));
+    drawCover();
+    toast("تم تغيير مقاس التصميم.");
+  });
+});
+$("coverImage").addEventListener("change",e=>{
+  const file=e.target.files&&e.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith("image/"))return toast("اختر صورة صالحة.");
+  if(coverImageURL)URL.revokeObjectURL(coverImageURL);
+  coverImageURL=URL.createObjectURL(file);
+  const img=new Image();
+  img.onload=()=>{coverImage=img;drawCover();toast("تمت إضافة الخلفية.");};
+  img.onerror=()=>toast("تعذر تحميل الصورة.");
+  img.src=coverImageURL;
+});
+$("removeCoverImage").addEventListener("click",()=>{
+  coverImage=null;
+  if(coverImageURL)URL.revokeObjectURL(coverImageURL);
+  coverImageURL=null;$("coverImage").value="";
+  drawCover();toast("تمت إزالة الخلفية.");
+});
+$("coverReset").addEventListener("click",()=>{
+  $("coverTitle").value="اصنع شيئًا استثنائيًا";
+  $("coverSubtitle").value="رحلتك تبدأ من هنا";
+  $("coverSize").value=76;
+  $("coverColor1").value="#10172c";
+  $("coverColor2").value="#6555ee";
+  $("coverTextColor").value="#ffffff";
+  $("coverGlow").checked=true;$("coverFrame").checked=true;
+  coverImage=null;
+  if(coverImageURL)URL.revokeObjectURL(coverImageURL);
+  coverImageURL=null;$("coverImage").value="";
+  $("coverSizeVal").textContent="76px";
+  drawCover();toast("تمت إعادة التصميم.");
+});
+$("downloadCover").addEventListener("click",()=>{
+  drawCover();
+  canvas.toBlob(blob=>{
+    if(!blob)return toast("تعذر تصدير التصميم.");
+    downloadBlob(blob,"pixelstudio-cover.png");
+  },"image/png");
+});
+
+/* Initial rendering */
+updateImageLabels();
+drawCover();
+</script>
+</body>
+</html>
